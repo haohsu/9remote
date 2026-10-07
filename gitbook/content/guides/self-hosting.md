@@ -55,19 +55,22 @@ database_id = "YOUR_GENERATED_DATABASE_ID"
 ```
 
 ### Step 3: Run Database Migrations
-Apply the initial database schema to your D1 database:
+Apply all database migrations to your D1 database. They run in filename order:
 
 ```bash
-npx wrangler d1 execute nineremote-db --file=./web/migrations/001_initial.sql --remote
+cd web
+npx wrangler d1 migrations apply nineremote-db --remote
 ```
 
 ### Step 4: Configure Secrets
-Create `web/.dev.vars` with your secret keys:
+Copy the template and fill in your values — `APP_SECRET` is the master secret
+(admin JWT, API key verification, QR token encryption, cron cleanup):
 
 ```bash
-ADMIN_JWT_SECRET="your-random-32-byte-secret"
-TOKEN_SECRET="your-random-32-byte-secret"
-TURN_KEY_SECRET="your-turn-secret"
+cp web/.dev.vars.example web/.dev.vars
+# APP_SECRET — generate with: openssl rand -hex 32
+# CLOUDFLARE_API_KEY / EMAIL / ACCOUNT_ID — from your Cloudflare profile
+# TURN_KEY_ID / TURN_KEY_SECRET — from the Cloudflare dashboard (Realtime TURN)
 ```
 
 Sync these secrets to your Cloudflare production environment:
